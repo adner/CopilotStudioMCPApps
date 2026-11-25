@@ -1,0 +1,14 @@
+node_modules/
+dist/
+reports/
+logs/
+.env
+generated/
+
+# Private research, findings, demo notes and agent notes (local only)
+docs/FINDINGS.md
+docs/evidence/
+docs/PLAN-generative-ui.md
+docs/DEMO-SCRIPT.md
+AGENTS.md
+CLAUDE.md

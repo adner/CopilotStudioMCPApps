@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>MCP Apps Capability Probe</title>
+</head>
+<body>
+  <main id="main">
+    <header class="top">
+      <div>
+        <h1>MCP Apps capability probe</h1>
+        <p class="sub" id="subtitle">Connecting to host…</p>
+      </div>
+      <div class="summary" id="summary"></div>
+    </header>
+
+    <section class="actions">
+      <button data-action="tools-call">tools/call</button>
+      <button data-action="tools-call-app-only">tools/call (app-only)</button>
+      <button data-action="resources-read">resources/read</button>
+      <button data-action="open-link">Open https link</button>
+      <button data-action="open-link-bad">Open non-http link</button>
+      <button data-action="message">Send ui/message</button>
+      <button data-action="model-context">Update model context</button>
+      <button data-action="resize">Toggle compact (resize test)</button>
+      <button data-action="fullscreen">Fullscreen</button>
+      <button data-action="inline">Inline</button>
+      <button data-action="pip">Picture-in-picture</button>
+      <button data-action="download">Download file</button>
+      <button data-action="log">Send log</button>
+    </section>
+
+    <table class="probes">
+      <thead>
+        <tr><th>Capability</th><th>Docs</th><th>Observed</th><th>Detail</th></tr>
+      </thead>
+      <tbody id="probe-rows"></tbody>
+    </table>
+
+    <div id="sandbox-frame" class="sandbox-frame" hidden></div>
+
+    <div id="compact-note" class="compact-note">
+      Compact mode: the page is now ~120 px tall. If the frame shrank, the host honours
+      <code>ui/notifications/size-changed</code>. Click again to expand.
+    </div>
+
+    <details>
+      <summary>Host capabilities (from <code>ui/initialize</code>)</summary>
+      <pre id="host-caps">–</pre>
+    </details>
+    <details>
+      <summary>Host context</summary>
+      <pre id="host-context">–</pre>
+    </details>
+    <details>
+      <summary>Tool input / result received</summary>
+      <pre id="tool-data">–</pre>
+    </details>
+    <details open>
+      <summary>Event log</summary>
+      <ol id="log" class="log"></ol>
+    </details>
+  </main>
+  <script type="module" src="/src/probe.ts"></script>
+</body>
+</html>

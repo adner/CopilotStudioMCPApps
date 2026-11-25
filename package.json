@@ -1,0 +1,46 @@
+{
+  "name": "copilot-studio-mcp-apps-probe",
+  "version": "1.0.0",
+  "description": "MCP Apps capability probe and generative UI demo for Copilot Studio",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc --noEmit && cross-env INPUT=probe.html vite build && cross-env INPUT=genui.html vite build",
+    "serve": "tsx --env-file-if-exists=.env main.ts",
+    "start": "npm run build && npm run serve",
+    "dev": "cross-env NODE_ENV=development concurrently \\\"vite build --watch\\\" \\\"tsx --watch main.ts\\\"",
+    "tunnel": "devtunnel host -p 3001 --allow-anonymous"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@jetbrains/websandbox": "^1.4.3",
+    "@modelcontextprotocol/client": "^2.4.0",
+    "@modelcontextprotocol/ext-apps": "^2.0.4",
+    "@modelcontextprotocol/node": "^2.1.2",
+    "@modelcontextprotocol/server": "^2.4.0",
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "openai": "^7.63.0",
+    "partial-json": "^0.1.7",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "concurrently": "^10.0.7",
+    "cross-env": "^10.1.0",
+    "playwright-core": "^1.65.1",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vite-plugin-singlefile": "^2.3.4"
+  }
+}

@@ -1,0 +1,98 @@
+:root {
+  color-scheme: light dark;
+  /* Fallbacks; the host may override these via host context styles. */
+  --color-text-primary: light-dark(#1f2328, #e6edf3);
+  --color-text-secondary: light-dark(#59636e, #9198a1);
+  --color-background-primary: light-dark(#ffffff, #1b1b1f);
+  --color-background-secondary: light-dark(#f6f8fa, #24242a);
+  --color-border-primary: light-dark(#d1d9e0, #3d444d);
+  --border-radius-md: 6px;
+  --font-sans: "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", Consolas, monospace;
+
+  --ok: light-dark(#1a7f37, #3fb950);
+  --bad: light-dark(#cf222e, #f85149);
+  --warn: light-dark(#9a6700, #d29922);
+  --muted: var(--color-text-secondary);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-text-primary);
+  background: var(--color-background-primary);
+}
+
+main { padding: 12px 14px 16px; }
+
+.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+h1 { font-size: 16px; margin: 0; }
+.sub { margin: 2px 0 0; color: var(--muted); }
+.summary { display: flex; gap: 10px; font-variant-numeric: tabular-nums; }
+.summary span { white-space: nowrap; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+button {
+  font: inherit;
+  padding: 4px 10px;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border-primary);
+  background: var(--color-background-secondary);
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+button:hover { border-color: var(--color-text-secondary); }
+button:disabled { opacity: .5; cursor: default; }
+
+table.probes { width: 100%; border-collapse: collapse; }
+.probes th, .probes td {
+  text-align: left; vertical-align: top;
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--color-border-primary);
+}
+.probes th { font-weight: 600; color: var(--muted); font-size: 12px; }
+.probes td:nth-child(1) { white-space: nowrap; }
+.probes td:nth-child(1) code { font-size: 12px; }
+.probes td:nth-child(2) { color: var(--muted); white-space: nowrap; }
+.probes td:nth-child(4) { color: var(--muted); word-break: break-word; }
+
+.status { font-weight: 600; white-space: nowrap; }
+.status.pass { color: var(--ok); }
+.status.fail { color: var(--bad); }
+.status.unsupported { color: var(--warn); }
+.status.pending, .status.waiting, .status.info { color: var(--muted); }
+
+code, pre { font-family: var(--font-mono); }
+pre {
+  font-size: 11.5px;
+  background: var(--color-background-secondary);
+  border-radius: var(--border-radius-md);
+  padding: 8px; margin: 6px 0;
+  max-height: 260px; overflow: auto;
+  white-space: pre-wrap; word-break: break-word;
+}
+details { margin-top: 10px; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Compact mode shrinks the page far below the host's max height so a
+   size-changed notification has a visible effect on the frame. */
+.compact-note { display: none; color: var(--muted); }
+body.compact .compact-note { display: block; }
+.sandbox-frame {
+  margin-top: 8px; height: 34px;
+  border: 1px dashed var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+}
+body.compact .sandbox-frame,
+body.compact table.probes,
+body.compact details,
+body.compact .actions button:not([data-action="resize"]) { display: none; }
+
+.log { margin: 6px 0; padding-left: 22px; font-family: var(--font-mono); font-size: 11.5px; max-height: 200px; overflow: auto; }
+.log li { margin: 1px 0; }
+
+body.fullscreen main { max-width: 1100px; margin: 0 auto; }
