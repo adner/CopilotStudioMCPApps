@@ -65,7 +65,7 @@ It takes only CopilotKit's renderer and generation format. The renderer is vendo
    | `say(text)` | `ui/message` | A 🪄 message appears in the chat, and the agent replies. |
    | `remember(text, data)` | `ui/update-model-context` | The agent knows the UI's current state without being told. |
    | `openLink(url)` | `ui/open-link` | Opens a link in a new tab. |
-   | `fullscreen(mode)` | display-mode request | Moves the UI to the side pane next to the chat. |
+   | `fullscreen(mode)` | `ui/request-display-mode` | Moves the UI to the side pane next to the chat. |
 
 10. **The finished generation is saved** to `generated/<uiId>.json`. That's what makes replays (`replay_ui`) and
     change requests (*"make it spookier"*, `create_ui` with an earlier `uiId`) possible.

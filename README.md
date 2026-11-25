@@ -106,6 +106,77 @@ from the agent and add it again.
 
 A generation takes about a minute. A loading card covers the wait, then the UI streams in.
 
+## How generated UIs talk to the chat
+
+A generated UI runs in a sandbox and can't reach the chat or the agent directly. Instead, it can call a small set of
+**host functions**. The UI's own frame ([`src/genui-bridge.ts`](src/genui-bridge.ts)) carries each call to Copilot Studio
+as an MCP Apps request.
+
+| Function | What happens in Copilot Studio | MCP Apps request |
+| --- | --- | --- |
+| `say(text)` | `text` is posted to the chat as your message, starting with 🪄, and the agent replies to it | `ui/message` |
+| `remember(text, data?)` | The agent quietly learns the UI's current state. Nothing appears in the chat. | `ui/update-model-context` |
+| `openLink(url)` | Opens an https link in a new browser tab | `ui/open-link` |
+| `fullscreen(mode?)` | Moves the UI to the side pane next to the chat, or back inline | `ui/request-display-mode` |
+
+### Asking for them in a prompt
+
+You don't call these functions yourself. The model that writes the UI decides when to use them, based on your
+request. It follows rules in the generator prompt ([`genui/prompt.ts`](genui/prompt.ts)):
+
+- **`say`** is used when the request asks the UI to *tell*, *ask*, *send* or *report* something to the chat, or when a
+  choice should continue the conversation (a story, a game turn, an "Explain this" button). It's only used for
+  meaningful moments, never when the UI loads, on a timer or for ordinary input.
+  - *"…When I press equals, tell the chat the answer like a spooky fortune teller."*
+  - *"…When I press Order, send my order to the chat."*
+  - *"…with an 'Explain this' button that asks you about the current phase."*
+- **`remember`** is used when the UI tracks something you might ask the agent about later: a score, progress, a
+  selection. Ask for it with words like *track*, *keep count* or *remember*, then ask the agent about it in the chat.
+  - *"Build a pomodoro timer that tracks my completed sessions."* Later: *"How productive have I been?"*
+  - *"Chart coffee against bugs fixed across a week."* Click a day, then: *"Which day should this developer be worried about?"*
+- **`fullscreen`** is offered as a small button in 3D scenes, games and big visuals. Every generated UI also gets a
+  round **⤢** button in the bottom-right corner when you hover over it.
+- **`openLink`** is used when the request asks for links, such as *"…with a 'Learn more' button for each planet."*
+
+If the model doesn't use a function you expected, say so explicitly in the prompt: *"send it to the chat"* or
+*"remember my score so you can tell me later"*.
+
+### Details
+
+- **`say(text)`** posts the message as if you had typed it, so the agent answers it like any other message. The 🪄
+  prefix marks it as coming from the UI. The agent instructions above tell the agent to reply to these messages in
+  character. In fullscreen, the UI stays visible next to the chat while the agent replies.
+- **`remember(text, data?)`** gives the agent the text `State of generated UI <uiId>: <text>`, plus `data` as
+  structured content if it's a plain object. Each call **replaces** what was remembered before, so the UI sends its
+  whole current state each time, not just what changed. The agent sees it when you send your next message.
+- All four functions return a Promise. `say` and `openLink` resolve to `{ ok: boolean }`, `remember` to `{ ok: true }`,
+  and `fullscreen` to `{ mode }` with the mode the host switched to. Text is cut off at 4,000 characters.
+- Inside the generated code, the functions are called through the sandbox's RPC channel:
+
+  ```js
+  // In a generated UI's JavaScript
+  async function order() {
+    orderButton.disabled = true;
+    await Websandbox.connection.remote.say(`I'd like a pizza with ${toppings.join(", ")}!`);
+    orderButton.disabled = false;
+  }
+  Websandbox.connection.remote.remember(`Completed sessions: ${sessions}`, { sessions });
+  ```
+
+- Errors in generated code are forwarded to `logs/server.log` automatically through a hidden fifth function,
+  `reportError`, so a broken UI can be diagnosed without browser developer tools.
+
+### Adding your own function
+
+1. Add an entry `{ name, handler }` to `SANDBOX_FUNCTIONS` in [`src/genui-bridge.ts`](src/genui-bridge.ts). The
+   handler receives the arguments the generated code passes, and can use any method of the MCP Apps `App` object,
+   such as calling one of your server's tools with `app.callServerTool(...)`.
+2. Describe it, and when to use it, in the **Host functions** section of [`genui/prompt.ts`](genui/prompt.ts), so the
+   model knows it exists.
+3. Run `npm run build`, and restart the server for the prompt change.
+
+Keep `SANDBOX_FUNCTIONS` a constant list: CopilotKit's renderer recreates the sandbox whenever the list changes.
+
 ## Tools
 
 | Tool | Visibility | Role |
